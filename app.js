@@ -38,7 +38,7 @@ app.post('/notify', (req, res) => {
         const balance = result.data.wallet.final_balance / 100000000;
         const text = `${text} - ${balance} BTC`;
 
-        Request.find({}, (err, result) => {
+        Chat.find({}, (err, result) => {
             for (let i in result) {
                 bot.sendMessage(result[i].chatId, req.body);
             }
