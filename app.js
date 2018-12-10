@@ -20,6 +20,10 @@ app.post('/notify', (req, res) => {
     res.json(process.env);
 });
 
+app.get('/_env', (req, res) => {
+    res.json(process.env);
+});
+
 app.listen(PORT, () => {
     console.log(`Express server is listening on ${PORT}`);
 });
