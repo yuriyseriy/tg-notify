@@ -1,31 +1,32 @@
 const axios = require('axios');
 const express = require('express');
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const TelegramBot = require('node-telegram-bot-api');
 
-const PORT = process.env.PORT || 3000;
-const TOKEN = process.env.TOKEN || '';
-const URL = process.env.APP_URL || 'https://<app-name>.herokuapp.com:443';
+const {PORT, MONGODB_URI, TOKEN, URL} = process.env;
 
 const bot = new TelegramBot(TOKEN);
 bot.setWebHook(`${URL}/bot${TOKEN}`);
+
+const Chat = mongoose.model('chat', new mongoose.Schema({
+    chatId: {type: Number, unique: true}
+}));
+
+const Request = mongoose.model('request', new mongoose.Schema({
+    body: String
+}, {
+    timestamps: true
+}));
+
+mongoose.connect(MONGODB_URI, {useCreateIndex: true, useNewUrlParser: true});
 
 const app = express();
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(cors());
-
-const sendMessage = text => {
-    const chats = [
-        673834051
-    ];
-
-    for (let i in chats) {
-        bot.sendMessage(chats[i], text);
-    }
-};
 
 app.post(`/bot${TOKEN}`, (req, res) => {
     bot.processUpdate(req.body);
@@ -37,18 +38,28 @@ app.post('/notify', (req, res) => {
 
     axios(`https://blockchain.info/multiaddr?active=${text}`).then(result => {
         const balance = result.data.wallet.final_balance / 100000000;
+        const text = `${text} - ${balance} BTC`;
 
-        sendMessage(`${text} - ${balance} BTC`);
+        Request.find({}, (err, result) => {
+            for (let i in result) {
+                bot.sendMessage(result[i].chatId, text);
+            }
+        });
     }).catch(err => {
         console.log(err.data);
     });
 
-    // todo save request
+    const request = new Request();
+    request.body = JSON.stringify(text);
+    request.save();
 
     res.json({success: true});
 });
 
-app.get('/xpub/:xpub', (req, res) => {
+app.get('/requests', (req, res) => {
+    Request.find({}, (err, result) => {
+        res.json(result);
+    });
 });
 
 app.listen(PORT, () => {
@@ -57,14 +68,20 @@ app.listen(PORT, () => {
 
 bot.on('message', msg => {
     const {text} = msg;
-
-    // todo save to db
+    let message = '';
 
     if (text === '/start') {
-        bot.sendMessage(msg.chat.id, 'Hello, please ether password:');
+        message = 'Hello, please ether password:';
     } else if (text === 'qwe@123') {
-        bot.sendMessage(msg.chat.id, 'Congratulations, password is correct. Get Luchy :)');
+        const chat = new Chat();
+        chat.chatId = msg.chat.id;
+        chat.save();
+
+        message = 'Congratulations, password is correct. Get Luchy :)';
     } else {
-        bot.sendMessage(msg.chat.id, 'Sorry, your ID: ' + msg.chat.id);
+        message = 'Sorry, but your password incorrect';
     }
+
+    bot.sendMessage(msg.chat.id, message);
+
 });
