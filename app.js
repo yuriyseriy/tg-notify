@@ -17,7 +17,7 @@ app.post(`/bot${TOKEN}`, (req, res) => {
 });
 
 app.post('/notify', (req, res) => {
-    res.json({});
+    res.json(process.env);
 });
 
 app.listen(PORT, () => {
