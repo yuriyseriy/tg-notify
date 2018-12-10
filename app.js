@@ -22,8 +22,10 @@ app.post('/notify', (req, res) => {
     res.json(process.env);
 });
 
-app.get('/_env', (req, res) => {
-    res.json(process.env);
+app.get('/test', (req, res) => {
+    res.json({
+        test: 1
+    });
 });
 
 app.listen(PORT, () => {
