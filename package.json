@@ -1,0 +1,13 @@
+{
+  "name": "tg-notify",
+  "version": "1.0.0",
+  "main": "app.js",
+  "repository": "https://github.com/yuriyseriy/tg-notify.git",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "node-telegram-bot-api": "^0.30.0"
+  }
+}
