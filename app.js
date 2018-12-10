@@ -10,6 +10,8 @@ const {PORT, MONGODB_URI, TOKEN, URL} = process.env;
 const bot = new TelegramBot(TOKEN);
 bot.setWebHook(`${URL}/bot${TOKEN}`);
 
+mongoose.connect(MONGODB_URI, {useCreateIndex: true, useNewUrlParser: true});
+
 const Chat = mongoose.model('chat', new mongoose.Schema({
     chatId: {type: Number, unique: true}
 }));
@@ -19,8 +21,6 @@ const Request = mongoose.model('request', new mongoose.Schema({
 }, {
     timestamps: true
 }));
-
-mongoose.connect(MONGODB_URI, {useCreateIndex: true, useNewUrlParser: true});
 
 const app = express();
 
@@ -77,11 +77,10 @@ bot.on('message', msg => {
         chat.chatId = msg.chat.id;
         chat.save();
 
-        message = 'Congratulations, password is correct. Get Luchy :)';
+        message = 'Congratulations, password is correct. Get Lucky :)';
     } else {
         message = 'Sorry, but your password incorrect';
     }
 
     bot.sendMessage(msg.chat.id, message);
-
 });
