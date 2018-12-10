@@ -38,12 +38,11 @@ app.post('/notify', (req, res) => {
 
     axios('https://blockchain.info/multiaddr?active=' + text).then(result => {
         const balance = result.data.wallet.final_balance / 100000000;
-        const text = `${text} - ${balance} BTC`;
+        const message = `${text} - ${balance} BTC`;
 
         Chat.find({}, (err, chats) => {
             for (let i in chats) {
-                console.log(chats[i].chatId, text);
-                // bot.sendMessage(chats[i].chatId, text);
+                bot.sendMessage(chats[i].chatId, text);
             }
         });
     }).catch(err => {
