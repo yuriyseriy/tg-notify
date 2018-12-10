@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const TelegramBot = require('node-telegram-bot-api');
 
 const PORT = process.env.PORT || 3000;
-const TOKEN = process.env.APP_URL || '';
+const TOKEN = process.env.TOKEN || '';
 const URL = process.env.APP_URL || 'https://<app-name>.herokuapp.com:443';
 
 const bot = new TelegramBot(TOKEN);
@@ -39,5 +39,7 @@ bot.on('message', msg => {
         bot.sendMessage(msg.chat.id, 'Hello, please ether password:');
     } else if (text === 'qwe@123') {
         bot.sendMessage(msg.chat.id, 'Congratulations, password is correct. Get Luchy :)');
+    } else {
+        bot.sendMessage(msg.chat.id, 'Sorry, your ID: ' + msg.chat.id);
     }
 });
