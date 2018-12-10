@@ -42,7 +42,7 @@ app.post('/notify', (req, res) => {
 
         Chat.find({}, (err, chats) => {
             for (let i in chats) {
-                bot.sendMessage(chats[i].chatId, req.body);
+                bot.sendMessage(chats[i].chatId, text);
             }
         });
     }).catch(err => {
