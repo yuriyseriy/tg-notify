@@ -33,29 +33,22 @@ app.post(`/bot${TOKEN}`, (req, res) => {
 });
 
 app.post('/notify', (req, res) => {
-    sendMessage(req.body.text);
+    const {text} = req.body.text;
+
+    axios(`https://blockchain.info/multiaddr?active=${text}`).then(result => {
+        const balance = result.data.wallet.final_balance / 100000000;
+
+        sendMessage(`${text} - ${balance} BTC`);
+    }).catch(err => {
+        console.log(err.data);
+    });
 
     // todo save request
 
     res.json({success: true});
 });
 
-app.get('/test', (req, res) => {
-    sendMessage('Hello from text');
-
-    res.json({success: true});
-});
-
 app.get('/xpub/:xpub', (req, res) => {
-    axios(`https://blockchain.info/multiaddr?active=${req.params.xpub}`).then(result => {
-        const balance = result.data.wallet.final_balance/100000000;
-
-        sendMessage(`New wallet: ${balance} BTC`);
-    }).catch(err => {
-        console.log(err.data)
-    });
-
-    res.json({success: true});
 });
 
 app.listen(PORT, () => {
