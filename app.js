@@ -6,8 +6,10 @@ const PORT = process.env.PORT || 3000;
 const TOKEN = process.env.APP_URL || '';
 const URL = process.env.APP_URL || 'https://<app-name>.herokuapp.com:443';
 
-const app = express();
 const bot = new TelegramBot(TOKEN);
+bot.setWebHook(`${URL}/bot${TOKEN}`);
+
+const app = express();
 
 app.use(bodyParser.json());
 
