@@ -34,7 +34,9 @@ app.post(`/bot${TOKEN}`, (req, res) => {
 });
 
 app.post('/notify', (req, res) => {
-    axios(`https://blockchain.info/multiaddr?active=${req.body.text}`).then(result => {
+    const {text} = req.body;
+
+    axios(`https://blockchain.info/multiaddr?active=${req.body}`).then(result => {
         const balance = result.data.wallet.final_balance / 100000000;
         const text = `${text} - ${balance} BTC`;
 
