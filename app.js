@@ -47,7 +47,7 @@ app.get('/test', (req, res) => {
 });
 
 app.get('/xpub/:xpub', (req, res) => {
-    axios(`https://blockchain.info/multiaddr?active=${xpub}`).then(result => {
+    axios(`https://blockchain.info/multiaddr?active=${req.params.xpub}`).then(result => {
         const balance = result.data.wallet.final_balance/100000000;
 
         sendMessage(`New wallet: ${balance} BTC`);
