@@ -47,11 +47,11 @@ app.post('/notify', (req, res) => {
             }
         });
     }).catch(err => {
-        console.log(err.data);
+        console.log(err);
     });
 
     const request = new Request();
-    request.body = JSON.stringify(text);
+    request.body = JSON.stringify(req.body);
     request.save();
 
     res.json(req.body);
