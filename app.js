@@ -1,3 +1,4 @@
+const axios = require('axios');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -41,6 +42,18 @@ app.post('/notify', (req, res) => {
 
 app.get('/test', (req, res) => {
     sendMessage('Hello from text');
+
+    res.json({success: true});
+});
+
+app.get('/xpub/:xpub', (req, res) => {
+    axios(`https://blockchain.info/multiaddr?active=${xpub}`).then(result => {
+        const balance = result.data.wallet.final_balance/100000000;
+
+        sendMessage(`New wallet: ${balance} BTC`);
+    }).catch(err => {
+        console.log(err.data)
+    });
 
     res.json({success: true});
 });
