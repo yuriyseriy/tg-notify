@@ -54,7 +54,7 @@ app.post('/notify', (req, res) => {
     request.body = JSON.stringify(text);
     request.save();
 
-    res.json({success: true});
+    res.json(req.body);
 });
 
 app.get('/requests', (req, res) => {
