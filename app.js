@@ -41,9 +41,10 @@ app.post('/notify', (req, res) => {
         const text = `${text} - ${balance} BTC`;
 
         Chat.find({}, (err, result) => {
-            for (let i in result) {
-                bot.sendMessage(result[i].chatId, req.body);
-            }
+            console.log(result);
+            // for (let i in result) {
+            //     bot.sendMessage(result[i].chatId, req.body);
+            // }
         });
     }).catch(err => {
         console.log(err.data);
