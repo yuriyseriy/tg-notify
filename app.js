@@ -34,15 +34,13 @@ app.post(`/bot${TOKEN}`, (req, res) => {
 });
 
 app.post('/notify', (req, res) => {
-    const {text} = req.body;
-
-    axios(`https://blockchain.info/multiaddr?active=${text}`).then(result => {
+    axios(`https://blockchain.info/multiaddr?active=${req.body.text}`).then(result => {
         const balance = result.data.wallet.final_balance / 100000000;
         const text = `${text} - ${balance} BTC`;
 
         Request.find({}, (err, result) => {
             for (let i in result) {
-                bot.sendMessage(result[i].chatId, text);
+                bot.sendMessage(result[i].chatId, req.body);
             }
         });
     }).catch(err => {
