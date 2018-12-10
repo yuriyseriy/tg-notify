@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const TelegramBot = require('node-telegram-bot-api');
 
 const PORT = process.env.PORT || 3000;
@@ -33,6 +34,8 @@ app.post(`/bot${TOKEN}`, (req, res) => {
 app.post('/notify', (req, res) => {
     sendMessage(req.body.text);
 
+    // todo save request
+
     res.json({success: true});
 });
 
@@ -48,6 +51,8 @@ app.listen(PORT, () => {
 
 bot.on('message', msg => {
     const {text} = msg;
+
+    // todo save to db
 
     if (text === '/start') {
         bot.sendMessage(msg.chat.id, 'Hello, please ether password:');
