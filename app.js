@@ -13,19 +13,31 @@ const app = express();
 
 app.use(bodyParser.json());
 
+const sendMessage = text => {
+    const chats = [
+        673834051
+    ];
+
+    for (let i in chats) {
+        bot.sendMessage(chats[i], text);
+    }
+};
+
 app.post(`/bot${TOKEN}`, (req, res) => {
     bot.processUpdate(req.body);
     res.sendStatus(200);
 });
 
 app.post('/notify', (req, res) => {
-    res.json(process.env);
+    sendMessage(req.body.text);
+
+    res.json({success: true});
 });
 
 app.get('/test', (req, res) => {
-    res.json({
-        test: 1
-    });
+    sendMessage('Hello from text');
+
+    res.json({success: true});
 });
 
 app.listen(PORT, () => {
