@@ -1,86 +1,23 @@
-const axios = require('axios');
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const TelegramBot = require('node-telegram-bot-api');
+const Koa = require('koa');
+const cors = require('@koa/cors');
+const bodyParser = require('koa-bodyparser');
+const logger = require('koa-logger');
 
-const {PORT, MONGODB_URI, TOKEN, URL} = process.env;
+const routes = require('./routes');
+const api = require('./routes/api');
+const auth = require('./routes/auth');
+const bots = require('./routes/bots');
 
-const bot = new TelegramBot(TOKEN);
-bot.setWebHook(`${URL}/bot${TOKEN}`);
+const PORT = process.env.PORT || 3000;
 
-mongoose.connect(MONGODB_URI, {useCreateIndex: true, useNewUrlParser: true});
+const app = new Koa();
 
-const Chat = mongoose.model('chat', new mongoose.Schema({
-    chatId: {type: Number, unique: true}
-}));
-
-const Request = mongoose.model('request', new mongoose.Schema({
-    body: String
-}, {
-    timestamps: true
-}));
-
-const app = express();
-
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
+app.use(logger());
 app.use(cors());
+app.use(bodyParser());
+app.use(routes.routes()).use(routes.allowedMethods());
+app.use(api.routes()).use(api.allowedMethods());
+app.use(auth.routes()).use(auth.allowedMethods());
+app.use(bots.routes()).use(bots.allowedMethods());
 
-app.post(`/bot${TOKEN}`, (req, res) => {
-    bot.processUpdate(req.body);
-    res.sendStatus(200);
-});
-
-app.post('/notify', (req, res) => {
-    const {text} = req.body;
-
-    axios('https://blockchain.info/multiaddr?active=' + text).then(result => {
-        const balance = result.data.wallet.final_balance / 100000000;
-        const message = `${text} - ${balance} BTC`;
-
-        Chat.find({}, (err, chats) => {
-            for (let i in chats) {
-                bot.sendMessage(chats[i].chatId, message);
-            }
-        });
-    }).catch(err => {
-        console.log(err);
-    });
-
-    const request = new Request();
-    request.body = JSON.stringify(req.body);
-    request.save();
-
-    res.json(req.body);
-});
-
-app.get('/requests', (req, res) => {
-    Request.find({}, (err, result) => {
-        res.json(result);
-    });
-});
-
-app.listen(PORT, () => {
-    console.log(`Express server is listening on ${PORT}`);
-});
-
-bot.on('message', msg => {
-    const {text} = msg;
-    let message = '';
-
-    if (text === '/start') {
-        message = 'Hello, please ether password:';
-    } else if (text === 'qwe@123') {
-        const chat = new Chat();
-        chat.chatId = msg.chat.id;
-        chat.save();
-
-        message = 'Congratulations, password is correct. Get Lucky :)';
-    } else {
-        message = 'Sorry, but your password incorrect';
-    }
-
-    bot.sendMessage(msg.chat.id, message);
-});
+app.listen(PORT, () => console.log(`Listening on ${PORT}`));
