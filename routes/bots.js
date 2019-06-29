@@ -103,35 +103,34 @@ router.post('/:id/setWebHook', jwt, async ctx => {
 });
 
 router.post('/:id/webHook/:token', async ctx => {
-  // const telegraf = new Telegraf(bot.token);
-  // bot.handleUpdate(ctx.request.body, ctx.response);
+  const {id} = ctx.params;
 
-  /**
-   *
-   const bot = new Telegraf(TOKEN);
-   bot.telegram.setWebhook(`${URL}/bot${TOKEN}`);
+  const bot = await Bot.findOne({
+    where: {
+      userId: user.id,
+      id
+    }
+  });
 
-   bot.start(({reply}) => reply('Hello, please ether password:'));
-   bot.on('message', (ctx) => {
-  const {text} = ctx.message;
+  const telegraf = new Telegraf(bot.token);
+  telegraf.handleUpdate(ctx.request.body, ctx.response);
 
-  if (text === '/start') {
-    ctx.telegram.sendMessage(ctx.from.id, 'Hello, please ether password:');
-  } else if (text === 'qwe@123') {
-    const chat = new Chat();
-    chat.chatId = ctx.from.id;
-    chat.save();
+  telegraf.start(({reply}) => reply('Hello, please ether password:'));
 
-    ctx.telegram.sendMessage(ctx.from.id, 'Congratulations, your password is correct. Get Lucky :)');
-  } else {
-    ctx.telegram.sendMessage(ctx.from.id, 'Sorry, but your password incorrect');
-  }
-});
-   */
+  telegraf.on('message', (ctx) => {
+    const {text} = ctx.message;
+
+    if (text === '/start') {
+      ctx.telegram.sendMessage(ctx.from.id, 'Hello, please ether password:');
+    } else if (text === 'qwe@123') {
+      ctx.telegram.sendMessage(ctx.from.id, 'Congratulations, your password is correct. Get Lucky :)');
+    } else {
+      ctx.telegram.sendMessage(ctx.from.id, 'Sorry, but your password incorrect');
+    }
+  });
 
   ctx.status = 200;
   console.log(ctx.request.body);
-
 });
 
 module.exports = router;
