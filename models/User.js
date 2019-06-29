@@ -53,7 +53,8 @@ module.exports =
       }
     },
     activationCode: Sequelize.STRING,
-    passwordResetCode: Sequelize.STRING
+    passwordResetCode: Sequelize.STRING,
+    apiKey: Sequelize.STRING
   }, {
     sequelize,
     tableName: 'users',
