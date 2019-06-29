@@ -28,6 +28,7 @@ router.post('/create', jwt, async ctx => {
   const {name, token, password} = ctx.request.body;
 
   ctx.body = await Bot.create({
+    webHookUrl: 'webHookUrl',
     userId: user.id,
     name,
     token,
