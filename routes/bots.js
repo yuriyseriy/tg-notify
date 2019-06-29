@@ -1,6 +1,6 @@
 const Router = require('koa-router');
 const Telegraf = require('telegraf');
-const {Bot, Subscriber} = require('./models');
+const {Bot, Subscriber} = require('../models');
 
 const {URL} = process.env;
 
