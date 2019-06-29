@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {Sequelize, Model} = require('sequelize');
 
+const {JWT_SECRET_PHRASE} = process.env;
+
 class User extends Model {
   validPassword(password) {
     return bcrypt.compareSync(password, this.password);
@@ -19,7 +21,7 @@ class User extends Model {
       expires: Date.now() + 3 * 60 * 60 * 1000,
     };
 
-    return jwt.sign(JSON.stringify(payload), process.env.SECRET_PHRASE);
+    return jwt.sign(JSON.stringify(payload), JWT_SECRET_PHRASE);
   }
 }
 
