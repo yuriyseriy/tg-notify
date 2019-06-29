@@ -89,6 +89,29 @@ router.post('/:id/webHook/:token', async ctx => {
   // const telegraf = new Telegraf(bot.token);
   // bot.handleUpdate(ctx.request.body, ctx.response);
 
+  /**
+   *
+   const bot = new Telegraf(TOKEN);
+   bot.telegram.setWebhook(`${URL}/bot${TOKEN}`);
+
+   bot.start(({reply}) => reply('Hello, please ether password:'));
+   bot.on('message', (ctx) => {
+  const {text} = ctx.message;
+
+  if (text === '/start') {
+    ctx.telegram.sendMessage(ctx.from.id, 'Hello, please ether password:');
+  } else if (text === 'qwe@123') {
+    const chat = new Chat();
+    chat.chatId = ctx.from.id;
+    chat.save();
+
+    ctx.telegram.sendMessage(ctx.from.id, 'Congratulations, your password is correct. Get Lucky :)');
+  } else {
+    ctx.telegram.sendMessage(ctx.from.id, 'Sorry, but your password incorrect');
+  }
+});
+   */
+
   ctx.status = 200;
   console.log(ctx.request.body);
 
