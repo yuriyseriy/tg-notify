@@ -113,10 +113,8 @@ router.post('/:id/webHook/:token', async ctx => {
   });
 
   const telegraf = new Telegraf(token);
-  telegraf.handleUpdate(ctx.request.body, ctx.response);
 
   telegraf.start(({reply}) => reply('Hello, please ether password:'));
-
   telegraf.on('message', (ctx) => {
     const {text} = ctx.message;
 
@@ -128,6 +126,8 @@ router.post('/:id/webHook/:token', async ctx => {
       ctx.telegram.sendMessage(ctx.from.id, 'Sorry, but your password incorrect');
     }
   });
+
+  telegraf.handleUpdate(ctx.request.body, ctx.response);
 
   ctx.status = 200;
   console.log(ctx.request.body);
