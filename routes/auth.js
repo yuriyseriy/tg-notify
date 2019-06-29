@@ -19,21 +19,18 @@ router.post('/login', ctx => {
 
 router.post('/signup', async ctx => {
   const {email, password} = ctx.request.body;
-  const activationCode = speakeasy.generateSecret().hex;
+  const {base32, hex} = speakeasy.generateSecret();
 
   const user = await User.create({
     email,
-    password
+    password,
+    activationCode: hex,
+    apiKey: base32
   });
 
   ctx.body = {
     token: user.jwtToken()
   };
-});
-
-router.get('/test', ctx => {
-  // speakeasy.generateSecret()
-  ctx.body = speakeasy.generateSecret();
 });
 
 router.post('/auth/forgot', stub);
