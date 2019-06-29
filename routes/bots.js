@@ -103,16 +103,16 @@ router.post('/:id/setWebHook', jwt, async ctx => {
 });
 
 router.post('/:id/webHook/:token', async ctx => {
-  const {id} = ctx.params;
+  const {id, token} = ctx.params;
 
   const bot = await Bot.findOne({
     where: {
-      userId: user.id,
-      id
+      id,
+      token
     }
   });
 
-  const telegraf = new Telegraf(bot.token);
+  const telegraf = new Telegraf(token);
   telegraf.handleUpdate(ctx.request.body, ctx.response);
 
   telegraf.start(({reply}) => reply('Hello, please ether password:'));
