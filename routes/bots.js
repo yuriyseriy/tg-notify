@@ -27,7 +27,7 @@ router.post('/create', jwt, async ctx => {
   const {user} = ctx.state;
   const {name, token, password} = ctx.request.body;
 
-  ctx.body = await await Bot.create({
+  ctx.body = await Bot.create({
     userId: user.id,
     name,
     token,
