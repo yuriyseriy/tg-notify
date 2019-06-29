@@ -3,6 +3,7 @@ const cors = require('@koa/cors');
 const bodyParser = require('koa-bodyparser');
 const logger = require('koa-logger');
 const errorHandler = require('./middlewares/errorHandler');
+const passport = require('./middlewares/passport');
 
 const routes = require('./routes');
 const api = require('./routes/api');
@@ -18,6 +19,7 @@ app.use(errorHandler);
 app.use(logger());
 app.use(cors());
 app.use(bodyParser());
+app.use(passport.initialize());
 app.use(routes.routes()).use(routes.allowedMethods());
 app.use(api.routes()).use(api.allowedMethods());
 app.use(auth.routes()).use(auth.allowedMethods());
