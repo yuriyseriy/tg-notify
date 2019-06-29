@@ -1,52 +1,97 @@
 const Router = require('koa-router');
-const db = require('../db');
+const Telegraf = require('telegraf');
+const {Bot, Subscriber} = require('./models');
 
-const router = new Router();
+const {URL} = process.env;
 
-const USER_ID = 1;
-
-// todo user middleware
-// todo error handler
-// todo take out SQL requests to models
+const router = new Router({
+  prefix: '/bots'
+});
 
 const stub = ctx => ctx.body = 'stub';
 
-router.get('/bots', async ctx => {
-    ctx.body = await db.from('bots').where({user_id: USER_ID});
-});
+router.get('/', jwt, async ctx => {
+  const {user} = ctx.state;
 
-router.get('/bots/:id', async ctx => {
-    const bot = await db.select('id', 'bot_id', 'token', 'created_at').from('bots').where({
-        user_id: USER_ID,
-        id: ctx.params.id
-    }).first();
-    if (bot) {
-        ctx.body = bot;
-    } else {
-        ctx.body = {
-            error: 'Bot not found'
-        };
+  ctx.body = await Bot.findAll({
+    where: {
+      userId: user.id
     }
+  });
 });
 
-router.get('/bots/:id/statistic', stub);
-
-router.get('/bots/:id/subscribers', async ctx => {
-    const bot = await db.select('id', 'bot_id', 'token', 'created_at').from('bots').where({
-        user_id: USER_ID,
-        id: ctx.params.id
-    }).first();
-    if (bot) {
-        ctx.body = await db.from('subscribers').where({bot_id: bot.id});
-    } else {
-        ctx.body = {
-            error: 'Bot not found'
-        };
-    }
-});
-
-router.post('/bots/:id/update', stub);
-router.post('/bots/create', stub);
+router.post('/:id/update', stub);
+router.post('/create', stub);
 // block subscribers
+
+router.get('/:id', jwt, async ctx => {
+  const {user} = ctx.state;
+  const {id} = ctx.params;
+
+  const bot = await Bot.findOne({
+    where: {
+      userId: user.id,
+      id
+    }
+  });
+
+  if (bot) {
+    ctx.body = bot;
+  } else {
+    ctx.throw(404, 'Bot not found');
+  }
+});
+
+router.get('/:id/statistic', stub);
+
+router.get('/:id/subscribers', async ctx => {
+  const {user} = ctx.state;
+  const {id} = ctx.params;
+
+  const bot = await Bot.findOne({
+    where: {
+      userId: user.id,
+      id
+    }
+  });
+
+  if (bot) {
+    ctx.body = await Subscriber.findAll({
+      where: {
+        botId: bot.id
+      }
+    })
+  } else {
+    ctx.throw(404, 'Bot not found');
+  }
+});
+
+router.post('/:id/setWebHook', jwt, async ctx => {
+  const {user} = ctx.state;
+  const {id} = ctx.params;
+
+  const bot = await Bot.findOne({
+    where: {
+      userId: user.id,
+      id
+    }
+  });
+
+  const telegraf = new Telegraf(bot.token);
+  telegraf.telegram.setWebhook(`${URL}/bots/${bot.id}/webHook/${bot.token}`);
+
+  ctx.body = {
+    success: true
+  };
+});
+
+router.post('/:id/webHook/:token', async ctx => {
+  // const telegraf = new Telegraf(bot.token);
+  // bot.handleUpdate(ctx.request.body, ctx.response);
+
+  ctx.status = 200;
+  console.log(ctx.request.body);
+
+});
 
 module.exports = router;

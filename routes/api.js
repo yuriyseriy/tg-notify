@@ -1,6 +1,10 @@
 const Router = require('koa-router');
 
-const router = new Router();
+const router = new Router({
+  prefix: '/api'
+});
+
+// todo api нужен для подключения с других мест
 
 const stub = ctx => ctx.body = 'stub';
 
@@ -9,7 +13,7 @@ const stub = ctx => ctx.body = 'stub';
  * bot - bot name
  * message
  */
-router.post('/api/bots/:id/send', stub);
+router.post('/bots/:id/send', stub);
 
 /**
  * api_key - user api key
@@ -17,8 +21,8 @@ router.post('/api/bots/:id/send', stub);
  * limit - 20|100
  * offset - 0
  */
-router.get('/api/bots/:id/subcribers', stub);
+router.get('/bots/:id/subcribers', stub);
 
-router.get('/api/bots', stub);
+router.get('/bots', stub);
 
 module.exports = router;

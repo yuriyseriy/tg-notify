@@ -9,6 +9,7 @@ module.exports = {
         env: {
             NODE_ENV: 'development',
             JWT_SECRET_PHRASE: 'secret',
+            URL: 'https://tg-notify.herokuapp.com/',
             PORT: 1337
         },
         env_production: {
