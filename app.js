@@ -8,6 +8,7 @@ const routes = require('./routes');
 const api = require('./routes/api');
 const auth = require('./routes/auth');
 const bots = require('./routes/bots');
+const system = require('./routes/system');
 
 const {PORT} = process.env;
 
@@ -21,6 +22,7 @@ app.use(routes.routes()).use(routes.allowedMethods());
 app.use(api.routes()).use(api.allowedMethods());
 app.use(auth.routes()).use(auth.allowedMethods());
 app.use(bots.routes()).use(bots.allowedMethods());
+app.use(system.routes()).use(system.allowedMethods());
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 

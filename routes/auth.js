@@ -1,4 +1,5 @@
 const Router = require('koa-router');
+const {User} = require('../models');
 
 const router = new Router({
   prefix: '/auth'
@@ -11,27 +12,21 @@ router.post('/login', ctx => {
 
   ctx.body = {
     email: user.email,
-    token: user.generateJwt()
+    token: user.jwtToken()
   };
 });
 
 router.post('/signup', async ctx => {
   const {email, password} = ctx.request.body;
 
+  const user = await User.create({
+    email,
+    password
+  });
 
-  try {
-    const user = await User.create({
-      email,
-      password
-    });
-
-    ctx.body = {
-      token: user.generateJwt()
-    };
-  } catch (e) {
-    ctx.status = 500;
-    ctx.body = e;
-  }
+  ctx.body = {
+    token: user.jwtToken()
+  };
 });
 
 router.post('/auth/forgot', stub);

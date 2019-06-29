@@ -22,7 +22,19 @@ router.get('/', jwt, async ctx => {
 });
 
 router.post('/:id/update', stub);
-router.post('/create', stub);
+
+router.post('/create', jwt, async ctx => {
+  const {user} = ctx.state;
+  const {name, token, password} = ctx.request.body;
+
+  ctx.body = await await Bot.create({
+    userId: user.id,
+    name,
+    token,
+    password
+  });
+});
+
 // block subscribers
 
 router.get('/:id', jwt, async ctx => {
