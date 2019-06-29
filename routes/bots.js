@@ -1,5 +1,6 @@
 const Router = require('koa-router');
 const Telegraf = require('telegraf');
+const jwt = require('../middlewares/jwt');
 const {Bot, Subscriber} = require('../models');
 
 const {URL} = process.env;
