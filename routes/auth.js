@@ -1,4 +1,5 @@
 const Router = require('koa-router');
+const speakeasy = require('speakeasy');
 const {User} = require('../models');
 
 const router = new Router({
@@ -18,6 +19,7 @@ router.post('/login', ctx => {
 
 router.post('/signup', async ctx => {
   const {email, password} = ctx.request.body;
+  const activationCode = speakeasy.generateSecret().hex;
 
   const user = await User.create({
     email,
@@ -27,6 +29,11 @@ router.post('/signup', async ctx => {
   ctx.body = {
     token: user.jwtToken()
   };
+});
+
+router.get('/test', ctx => {
+  // speakeasy.generateSecret()
+  ctx.body = speakeasy.generateSecret();
 });
 
 router.post('/auth/forgot', stub);
