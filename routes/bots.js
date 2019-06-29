@@ -91,12 +91,15 @@ router.post('/:id/setWebHook', jwt, async ctx => {
     }
   });
 
+  const url = `${URL}/bots/${bot.id}/webHook/${bot.token}`;
   const telegraf = new Telegraf(bot.token);
-  telegraf.telegram.setWebhook(`${URL}/bots/${bot.id}/webHook/${bot.token}`);
+
+  const result = telegraf.telegram.setWebhook(url);
 
   ctx.body = {
-    success: true
-  };
+    url,
+    result
+  }
 });
 
 router.post('/:id/webHook/:token', async ctx => {
