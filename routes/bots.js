@@ -112,9 +112,16 @@ router.post('/:id/webHook/:token', async ctx => {
     }
   });
 
+  const helloMessage = 'Hello, please ether password:';
+
   const telegraf = new Telegraf(token);
 
-  telegraf.start(({reply}) => reply('Hello, please ether password:'));
+  telegraf.start(ctx => {
+    console.log(ctx);
+    const {reply} = ctx;
+
+    reply(helloMessage);
+  });
   telegraf.on('message', (ctx) => {
     const {text} = ctx.message;
 
