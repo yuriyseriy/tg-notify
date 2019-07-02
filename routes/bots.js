@@ -115,22 +115,26 @@ router.post('/:id/webHook/:token', async ctx => {
   const helloMessage = 'Hello, please ether password:';
 
   const telegraf = new Telegraf(token);
+  telegraf.on('message', async ctx => {
+    const {text, chat} = ctx.message;
 
-  telegraf.start(ctx => {
-    console.log(ctx);
-    const {reply} = ctx;
+    const [subscriber, created] = await Subscriber.findOrCreate({
+      where: {
+        botId: id,
+        chatId: ctx.from.id
+      },
+      defaults: {
+        firstName: chat.first_name,
+        lastName: chat.last_name,
+        nickname: chat.username,
+        isActive: true
+      }
+    });
 
-    reply(helloMessage);
-  });
-  telegraf.on('message', (ctx) => {
-    const {text} = ctx.message;
-
-    if (text === '/start') {
-      ctx.telegram.sendMessage(ctx.from.id, 'Hello, please ether password:');
-    } else if (text === 'qwe@123') {
-      ctx.telegram.sendMessage(ctx.from.id, 'Congratulations, your password is correct. Get Lucky :)');
+    if (created) {
+      ctx.telegram.sendMessage(ctx.from.id, 'Success added');
     } else {
-      ctx.telegram.sendMessage(ctx.from.id, 'Sorry, but your password incorrect');
+      ctx.telegram.sendMessage(ctx.from.id, 'Handled');
     }
   });
 
